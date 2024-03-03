@@ -124,8 +124,7 @@ def main():
             run = False
             game.loss()  # Riktig måte å kalle loss-metoden på
             pg.display.update()  # Oppdater skjermen for å vise tapeteksten
-            pg.time.delay(10000)  # Vent 2 sekunder før du avslutter pygame-vinduet
-            break
+            pg.time.delay(10000)  # Vent 10 sekunder før du avslutter pygame-vinduet
 
         game.redraw_window(player, rope)
         
@@ -135,6 +134,6 @@ def main():
     pg.quit()
     sys.exit()
 
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+main()
 
