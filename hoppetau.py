@@ -12,7 +12,7 @@ BLUE = (0, 0, 255)
 
 # Last inn bilder
 background_img = pg.image.load('background.png')
-player_img = pg.image.load('seahorse.png')  
+player_img = pg.image.load('seahorse.png')
 
 # Definerer spillet
 class Game:
@@ -23,6 +23,7 @@ class Game:
         self.background_img = pg.transform.scale(background_img, (WIDTH, HEIGHT))  # Skaler bakgrunnsbildet til skjermstørrelsen
         self.player_img = pg.transform.scale(player_img, (100, 150))  # Skaler spillerens bilde
         self.points = 0  # Spillerens poengsum
+        self.jump_over_rope = False  # Variabel for å sjekke om spilleren allerede har hoppet over tauet
         
     def redraw_window(self, player, rope):
         self.screen.blit(self.background_img, (0, 0))  # Tegn bakgrunnsbildet
@@ -40,7 +41,7 @@ class Game:
         font = pg.font.SysFont('Arial', 26)  # Definer en skrifttype
         text_img = font.render(f"Du tapte! Du fikk {self.points} poeng.", True, RED)  # Lag et bilde av tapeteksten
         self.screen.blit(text_img, (20, 60))  # Tegn tapeteksten på skjermen
-
+        
 class Player:
     def __init__(self, x, y, width, height, color):
         self.x = x
@@ -118,8 +119,11 @@ def main():
         rope.update()  # Oppdater tauets posisjon
 
         # Sjekk om spilleren hopper over tauet og legg til poeng
-        if player.y < rope.y and rope.x - rope.radius < player.x < rope.x + rope.radius * 2:
+        if player.y < rope.y and rope.x - rope.radius < player.x < rope.x + rope.radius * 2 and not game.jump_over_rope:
             game.points += 1
+            game.jump_over_rope = True
+        elif player.y >= rope.y:
+            game.jump_over_rope = False
 
         # Sjekk om spilleren og tauet kolliderer og avslutt spillet
         player_rect = pg.Rect(player.x, player.y, player.width, player.height)
