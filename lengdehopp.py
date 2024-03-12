@@ -63,7 +63,7 @@ class Spiller:
         pg.draw.rect(surface, GREEN, self.rect)
     
     def vis_meter(self, surface):  # Funksjon for å vise antall meter på skjermen
-        text_img = font.render(f'Du har hoppet {self.meter:.2f} meter.', True, BLACK)
+        text_img = font.render(f'Du har hoppet {self.meter:.1f} meter.', True, BLACK)
         surface.blit(text_img, (220, 280))
         
     def dødt(self, surface):  # Funksjon for si at hoppet ble dødt
