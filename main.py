@@ -7,198 +7,226 @@ class Game:
         self.clock = pg.time.Clock()
         self.hippocampus_img = pg.transform.scale(hippocampus_img, (WIDTH, HEIGHT))
         self.background_img = self.hippocampus_img
-        self.start_game_button = Button(start_game_img, WHITE, start_game_img.get_rect(topleft=(280, 430)))
-        self.next_button = Button(next_img, WHITE, next_img.get_rect(topleft=(420, 400)))
-        self.reaction_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)))
-        self.jumping_rope_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)))
-        self.long_jump_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)))
-        self.trivia_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)))
-        self.home_button = Button(home_img, WHITE, home_img.get_rect(topleft=(700, 20)))
-        self.display_reaction_button = False
-        self.display_jumping_rope_button = False
-        self.display_long_jump_button = False
-        self.display_trivia_button = False
-        self.display_next_button = False
-        self.keys_to_press = None
+
+        self.start_game_button = Button(start_game_img, WHITE, start_game_img.get_rect(topleft=(250, 430)), self.start_game)
+        self.next_button = Button(next_img, WHITE, next_img.get_rect(topleft=(420, 400)), self.next_game)
+        self.reaction_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)), self.reaction)
+        self.jumping_rope_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)), self.jumping_rope)
+        self.long_jump_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)), self.long_jump)
+        self.trivia_button = Button(start_img, WHITE, start_img.get_rect(topleft=(420, 400)), self.trivia)
+        self.home_button = Button(home_img, WHITE, home_img.get_rect(topleft=(700, 20)), self.home)
+        
+        self.start_game_button.display = True
+
         self.reaction_game = None
         self.jumping_rope_game = None
         self.long_jump_game = None
         self.trivia_game = None
+
         self.result_text = None
-        self.finish_text= None
+        self.finish_text = None
         self.finish2_text = None
-        self.points=0
+
+        self.buttons = [self.start_game_button, self.home_button, self.next_button,
+                        self.reaction_button, self.jumping_rope_button, self.long_jump_button,
+                        self.trivia_button]
+
+        self.points = 0
+
+    def draw_buttons(self):
+        for button in self.buttons:
+            if button.display:
+                button.draw()
+
+    def draw_text(self):
+        texts = [self.result_text, self.finish_text, self.finish2_text]
+        heights = [50, 80, 110]
+        for text in texts:
+            n=0
+            if text:
+                text_rect = self.result_text.get_rect(center=(WIDTH // 2, heights[n]))
+                screen.blit(self.result_text, text_rect)
+            n+=1
+
+    def start_game(self):
+        self.background_img = pg.transform.scale(introduction_img, (WIDTH, HEIGHT))
+        self.home_button.display = True
+        self.next_button.display = True
+        self.points = 0
+
+    def next_game(self):
+        self.background_img = pg.transform.scale(reaction_img, (WIDTH, HEIGHT))
+        self.reaction_button.display = True
+
+    def home(self):
+        for button in self.buttons:
+            button.display = False
+            
+        self.background_img = self.hippocampus_img
+        self.start_game_button.display = True
+        
+        self.finish_text = None
+        self.finish2_text = None
+        self.result_text = None 
+
+
+    def reaction(self):
+        print("kjører")
+        self.reaction_game = ReactionGame()
+        score = self.reaction_game.run()
+        self.points += score
+
+        self.background_img = pg.transform.scale(jump_rope_img, (WIDTH, HEIGHT))
+
+        self.jumping_rope_button.display = True
+        self.result_text = font.render(f"Resultatet ditt etter reaksjonsspillet er {self.points} poeng", True, BLUE)
+
+    def jumping_rope(self):
+        self.jumping_rope_game = JumpingRopeGame()
+        score = self.jumping_rope_game.run()
+        self.points += score
+
+        self.background_img = pg.transform.scale(long_jump_img, (WIDTH, HEIGHT))
+
+        self.long_jump_button.display = True
+        self.result_text = font.render(f"Resultatet ditt etter hoppetauspillet er {self.points} poeng", True, BLUE)
+
+    def long_jump(self):
+        self.long_jump_game = LongJumpGame()
+        score = self.long_jump_game.run()
+        self.points += score
+
+        self.background_img = pg.transform.scale(trivia_img, (WIDTH, HEIGHT))
+
+        self.trivia_button.display = True
+        self.result_text = font.render(f"Resultatet ditt etter lengdehoppspillet er {self.points} poeng", True, BLUE)
+
+    def trivia(self):
+        self.trivia_game = TriviaGame()
+        score = self.trivia_game.play_quiz()
+        self.points += score
+
+        self.background_img = pg.transform.scale(finish_img, (WIDTH, HEIGHT))
+
+        self.finish_text = font.render(f"Nå er hippocampusspillet ferdig!", True, BLUE)
+        self.result_text = font.render(f"Du fikk til sammen {self.points} poeng! Bra jobba!", True, BLUE)
+        self.finish2_text = font.render(f"Trykk på hjem-knappen hvis du vil starte hele spillet på nytt!", True, BLUE)
 
     def run(self):
         running = True
         while running:
             screen.blit(self.background_img, (0, 0))
-            if self.start_game_button:
-                self.start_game_button.draw()
-            if self.home_button:
-                self.home_button.draw()
-            if self.display_next_button is True:
-                self.next_button.draw()
-            if self.display_reaction_button is True:
-                self.reaction_button.draw()
-            if self.display_jumping_rope_button is True:
-                self.jumping_rope_button.draw() 
-            if self.display_long_jump_button is True:
-                self.long_jump_button.draw()
-            if self.display_trivia_button is True:
-                self.trivia_button.draw()
 
-            if self.result_text:
-                text_rect = self.result_text.get_rect(center=(WIDTH // 2, HEIGHT // 10))
-                screen.blit(self.result_text, text_rect)
-            if self.finish_text:
-                text_rect = self.finish_text.get_rect(center=(WIDTH // 2, HEIGHT // 6))
-                screen.blit(self.finish_text, text_rect)
-            if self.finish2_text:
-                text_rect = self.finish2_text.get_rect(center=(WIDTH // 2, HEIGHT // 4))
-                screen.blit(self.finish2_text, text_rect)
+            self.draw_buttons()
+            self.draw_text()
 
             pg.display.flip()
+
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
-                elif self.start_game_button and self.start_game_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(introduction_img, (WIDTH, HEIGHT))
-                    self.home_button = Button(home_img, WHITE, home_img.get_rect(topleft=(700, 20)))
-                    self.display_next_button = True
-                    self.start_game_button = None
-                    self.points=0
-                    
-                elif self.display_next_button and self.next_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(reaction_img, (WIDTH, HEIGHT))
-                    self.home_button = Button(home_img, WHITE, home_img.get_rect(topleft=(700, 20)))
-                    self.display_reaction_button = True
-                    self.display_next_button = False
-                    
-                elif self.home_button and self.home_button.is_clicked(event):
-                    self.background_img = self.hippocampus_img
-                    self.start_game_button = Button(start_game_img, WHITE, start_game_img.get_rect(topleft=(280, 430)))
-                    self.result_text = None
-                    self.display_reaction_button = False
-                    self.display_jumping_rope_button = False
-                    self.display_long_jump_button = False
-
-                elif self.display_reaction_button and self.reaction_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(jump_rope_img, (WIDTH, HEIGHT))
-                    self.reaction_game = ReactionGame()
-                    score = self.reaction_game.run()
-                    self.points += score
-                    self.display_jumping_rope_button = True
-                    self.result_text = font.render(f"Resultatet ditt etter reaksjonsspillet er {self.points} poeng", True, BLUE)
-                    self.display_reaction_button = False
-
-                elif self.display_jumping_rope_button and self.jumping_rope_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(long_jump_img, (WIDTH, HEIGHT))
-                    self.jumping_rope_game = JumpingRopeGame()
-                    score = self.jumping_rope_game.run()
-                    self.points += score
-                    self.display_long_jump_button = True
-                    self.result_text = font.render(f"Resultatet ditt etter hoppetauspillet er {self.points} poeng", True, BLUE)
-                    self.display_jumping_rope_button = False
-
-                elif self.display_long_jump_button and self.long_jump_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(trivia_img, (WIDTH, HEIGHT))
-                    self.long_jump_game = LongJumpGame()
-                    score = self.long_jump_game.run()
-                    self.display_trivia_button = True
-                    self.points += score
-                    self.result_text = font.render(f"Resultatet ditt etter lengdehoppspillet er {self.points} poeng", True, BLUE)
-                    self.display_long_jump_button = False
-
-                elif self.display_trivia_button and self.trivia_button.is_clicked(event):
-                    self.background_img = pg.transform.scale(finish_img, (WIDTH, HEIGHT))
-                    self.trivia_game = TriviaGame()
-                    score = self.trivia_game.play_quiz()
-                    self.points += score
-                    self.finish_text = font.render(f"Nå er hippocampusspillet ferdig!", True, BLUE)
-                    self.result_text = font.render(f"Du fikk til sammen {self.points} poeng! Bra jobba!", True, BLUE)
-                    self.finish2_text = font.render(f"Trykk på hjem-knappen hvis du vil starte hele spillet på nytt!", True, BLUE)
-                    self.display_trivia_button = False
-
-            self.clock.tick(60)
-
+                else:
+                    for button in self.buttons:
+                        if button.display and button.is_clicked(event):
+                            button.action()
+                            break
+            self.clock.tick(FPS)
         pg.quit()
         sys.exit()
-        
+
 class Button:
-    def __init__(self, img, color, rect):
+    def __init__(self, img, color, rect, action):
         self.img = img
         self.color = color
         self.rect = rect
+        self.action = action
+        self.display = False
+
     def draw(self):
         screen.blit(self.img, self.rect.topleft)
+        
     def is_clicked(self, event):
-        if event.type == pg.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
+        if self.display == True:
+            if event.type == pg.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
+                self.display = False
                 return True
         return False
         
 class MiniGame(Game):
     def __init__(self):
         super().__init__()
+        self.screen = screen
         self.clock = pg.time.Clock()
         self.score = 0
         self.background_img = pg.transform.scale(background_img, (WIDTH, HEIGHT))
-        self.home_button = Button(home_img, WHITE, home_img.get_rect(topleft=(700, 20)))
+        self.home_button.display = True
 
 class ReactionGame(MiniGame):
     def __init__(self):
-        self.screen = screen
         super().__init__()
         self.time_limit = 30
-        self.keys_to_press = []
         self.task_complete = False
-        self.keys_pressed = set()
+        self.keys_pressed = []
         self.start_time = 0
         self.generate_task()
         
     def generate_task(self):
-        self.keys_to_press = random.sample([pg.K_a, pg.K_b, pg.K_c, pg.K_d, pg.K_e, pg.K_f, pg.K_g, pg.K_h, pg.K_i, pg.K_j, pg.K_k, pg.K_l, pg.K_m, pg.K_n, pg.K_o, pg.K_p, pg.K_q, pg.K_r, pg.K_s, pg.K_t, pg.K_u, pg.K_v, pg.K_w, pg.K_x, pg.K_y, pg.K_z], 3)
+        self.keys_to_press = []
+        self.keys = [pg.K_a, pg.K_b, pg.K_c, pg.K_d, pg.K_e, pg.K_f, pg.K_g, pg.K_h, pg.K_i, pg.K_j, pg.K_k, pg.K_l, pg.K_m, pg.K_n, pg.K_o, pg.K_p, pg.K_q, pg.K_r, pg.K_s, pg.K_t, pg.K_u, pg.K_v, pg.K_w, pg.K_x, pg.K_y, pg.K_z]
+        for i in range (3):
+            key= random.choice(self.keys)
+            self.keys_to_press.append(key)
+            self.keys.remove(key)
         
     def check_task_complete(self):
-        return all(key in self.keys_pressed for key in self.keys_to_press)
+        correct = 0
+        for i in self.keys_to_press:
+            if i in self.keys_pressed:
+                correct += 1
+        return correct == 3
+                
     def run(self):
         self.start_time = pg.time.get_ticks()
         while True:
+            self.screen.blit(self.background_img, (0, 0))
+            self.home_button.draw()
+            
             current_time = pg.time.get_ticks()
             elapsed_time = (current_time - self.start_time) / 1000
             if elapsed_time >= self.time_limit:
                 return self.score
-            self.screen.blit(self.background_img, (0, 0))
+            
             time_remaining = max(0, int(self.time_limit - elapsed_time))
             clock_text = font.render(f"Tid som gjenstår: {time_remaining} sek", True, RED)
             self.screen.blit(clock_text, (10, 10))
+            
             task_text = font.render(f"Tast disse boksene: {chr(list(self.keys_to_press)[0]).upper()}, {chr(list(self.keys_to_press)[1]).upper()}, {chr(list(self.keys_to_press)[2]).upper()}", True, BLUE)
             text_rect = task_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
             self.screen.blit(task_text, text_rect)
+            
             score_text = font.render(f"Poengsum: {self.score}", True, RED)
             self.screen.blit(score_text, (10, 90))
-            self.home_button.draw()
+            
             pg.display.flip()
-            # Oppdater keys_pressed-settet når knappene trykkes ned eller slippes
+            
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
-                    self.keys_pressed.add(event.key)
+                    self.keys_pressed.append(event.key)
                 elif event.type == pg.KEYUP:
                     if event.key in self.keys_pressed:
                         self.keys_pressed.remove(event.key)
                 elif event.type == pg.MOUSEBUTTONDOWN:
                     if self.home_button.is_clicked(event):
-                        self.background_img = pg.transform.scale(jump_rope_img, (WIDTH, HEIGHT))
+                        print("Trykket")
                         return self.score
             if self.check_task_complete():
-                print("Fullført")
                 self.task_complete = True
                 self.score += 1
+
             if elapsed_time >= self.time_limit or self.task_complete:
                 self.generate_task()
                 self.task_complete = False
-            self.clock.tick(60)
+            self.clock.tick(FPS)
         return self.score
     
 class JumpingRopeGame(MiniGame):
@@ -220,7 +248,7 @@ class JumpingRopeGame(MiniGame):
 
     def run(self):
         while self.running:  # Bruk self.running til å kontrollere løkken
-            self.clock.tick(60)
+            self.clock.tick(FPS)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     self.running = False  
@@ -318,7 +346,7 @@ class LongJumpGame(MiniGame):
         run = True
         while run:
             screen.blit(self.background_img, (0, 0))
-            self.clock.tick(60)
+            self.clock.tick(FPS)
             self.home_button.draw()
 
             for event in pg.event.get():
