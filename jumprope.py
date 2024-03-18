@@ -98,7 +98,7 @@ class Rope:
         self.x = int(WIDTH // 2 + math.cos(self.angle) * (WIDTH // 4) * self.radius_multiplier)
         self.y = int(HEIGHT // 2 + math.sin(self.angle) * (HEIGHT // 4) * self.radius_multiplier)
 
-    def draw(self, win):
+    def draw(self):
         # Tegn tauet som en sirkel
-        pg.draw.circle(win, self.color, (self.x, self.y), self.radius)
+        pg.draw.circle(self.color, (self.x, self.y), self.radius)
         
