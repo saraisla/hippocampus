@@ -377,9 +377,21 @@ class LongJumpGame(MiniGame):
         self.plank_w = Lane(WHITE, plank_W_X, laneR_Y, plank_W_WIDTH, laneR_HEIGHT)
         self.start = Lane(RED, START_X, laneR_Y, START_WIDTH, laneR_HEIGHT)
         self.lane = Lane(GREY, LOOPElane_X, laneR_Y, LOOPElane_WIDTH, laneR_HEIGHT)
+        self.countdown_timer = 3
 
     def run(self):
         run = True
+
+        countdown_font = pg.font.SysFont("Verdana", 150)
+        
+        while self.countdown_timer > 0:
+            screen.blit(self.background_img, (0, 0))
+            countdown_text = countdown_font.render(f"{self.countdown_timer}", True, BLUE)
+            screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
+            pg.display.flip()
+            pg.time.delay(1000) # Vent i 1 sekund
+            self.countdown_timer -= 1
+        
         while run:
             screen.blit(self.background_img, (0, 0))
             self.clock.tick(FPS)
