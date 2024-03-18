@@ -148,7 +148,7 @@ class Game:
                         self.active = not self.active
                         self.text = " "
                     else:
-                        self.active = False  # Deactivate the input box if clicked outside
+                        self.active = False
 
                 if event.type == pg.KEYDOWN:
                     if self.active:
@@ -273,12 +273,12 @@ class JumpingRopeGame(MiniGame):
         super().__init__()
         self.player = PlayerRope(WIDTH // 2 - 50, HEIGHT - 220, 80, 110, RED)
         self.rope = Rope(WIDTH//2, HEIGHT//2, 10, BLUE)
-        self.running = True  # Definer running-variabelen her
+        self.running = True 
         self.jump_over_rope = False
 
     def redraw_window(self, player, rope):
         screen.blit(self.background_img, (0, 0))
-        screen.blit(player_img, (self.player.x, self.player.y))  # Tegn playeren som seahorse.png
+        screen.blit(player_img, (self.player.x, self.player.y))
         pg.draw.circle(screen, self.rope.color, (self.rope.x, self.rope.y), self.rope.radius)
         score_text = font.render(f"Poengsum: {self.score}", True, RED)
         screen.blit(score_text, (10, 90))
@@ -286,7 +286,7 @@ class JumpingRopeGame(MiniGame):
 
 
     def run(self):
-        while self.running:  # Bruk self.running til å kontrollere løkken
+        while self.running: 
             self.clock.tick(FPS)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -296,12 +296,11 @@ class JumpingRopeGame(MiniGame):
                 self.player.x -= self.player.vel
             if keys[pg.K_RIGHT] and self.player.x < WIDTH - self.player.width - self.player.vel:
                 self.player.x += self.player.vel
-            # jump hvis mellomromstasten trykkes og playeren ikke allerede jumper
+            # hopp hvis mellomromstasten trykkes og playeren ikke allerede hopper
             if not self.player.isJumping:
                 if keys[pg.K_SPACE]:
                     self.player.isJumping = True
             else:
-                # Utfør jump
                 if self.player.jumpCount >= -10:
                     neg = 1
                     if self.player.jumpCount < 0:
@@ -312,9 +311,8 @@ class JumpingRopeGame(MiniGame):
                     self.player.isJumping = False
                     self.player.jumpCount = 10
 
-            self.rope.update()  # Oppdater tauets posisjon
+            self.rope.update()  # Oppdaterer tauets posisjon
 
-            # Sjekk om playeren jumper over tauet og legg til poeng
             if self.player.y < self.rope.y and self.rope.x - self.rope.radius < self.player.x < self.rope.x + self.rope.radius * 2 and not self.jump_over_rope:
                 self.score += 1
                 self.rope.angular_speed+=0.005
@@ -322,21 +320,20 @@ class JumpingRopeGame(MiniGame):
             elif self.player.y >= self.rope.y:
                 self.jump_over_rope = False
 
-            # Sjekk om playeren og tauet kolliderer og avslutt spillet
             self.player_rect = pg.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
             self.rope_rect = pg.Rect(self.rope.x - self.rope.radius, self.rope.y - self.rope.radius, 2 * self.rope.radius, 2 * self.rope.radius)
             if self.player_rect.colliderect(self.rope_rect):
                 return self.score
                 
-            self.redraw_window(self.player, self.rope)  # Tegn spillet
+            self.redraw_window(self.player, self.rope) 
 
             if self.player.y + self.player.height > HEIGHT:
-                return self.score   # Avslutt spillet hvis playeren faller utenfor skjermen
+                return self.score
 
             pg.display.flip()
 
 
-        return self.score  # Returner self.score når løkken er ferdig
+        return self.score 
 
 class PlayerRope:
     def __init__(self, x, y, width, height, color):
@@ -354,7 +351,7 @@ class Rope:
     def __init__(self, x, y, radius, color):
         self.x = x
         self.y = y
-        self.radius = radius  # Tauets radius
+        self.radius = radius  
         self.color = color
         self.angle = -math.pi/1  # Startvinkel for tauet (endret til negativ verdi)
         self.angular_speed = 0.08  # Hastighet for svinging av tauet
