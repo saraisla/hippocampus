@@ -5,9 +5,9 @@ class LongJumpGame(MiniGame):
     def __init__(self):
         super().__init__()
         self.player = PlayerLong()
+        self.plank_w = self.player.plank_w
         self.sand = Lane(BEIGE, SAND_X, laneR_Y, SAND_WIDTH, laneR_HEIGHT)
         self.plank_b = Lane(BLACK, plank_B_X, laneR_Y, plank_B_WIDTH, laneR_HEIGHT)  
-        self.plank_w = Lane(WHITE, plank_W_X, laneR_Y, plank_W_WIDTH, laneR_HEIGHT)
         self.start = Lane(RED, START_X, laneR_Y, START_WIDTH, laneR_HEIGHT)
         self.lane = Lane(GREY, LOOPElane_X, laneR_Y, LOOPElane_WIDTH, laneR_HEIGHT)
         self.countdown_timer = 3
@@ -63,6 +63,7 @@ class LongJumpGame(MiniGame):
                 
             elif self.player.rect.colliderect(self.plank_w.rect):
                 if not self.player.has_jumped:
+                    self.player.meter = 0
                     run = False
                     self.player.dead()
                     pg.display.flip()
@@ -104,6 +105,7 @@ class PlayerLong:
         self.jump_h = 20
         self.y_speed = 0  
         self.rect = pg.Rect(10, self.y_pos, 30, 50)  # Rektangelstørrelse
+        self.plank_w = Lane(WHITE, plank_W_X, laneR_Y, plank_W_WIDTH, laneR_HEIGHT)
         self.running = False  
         self.meter = 0
         self.sand = Lane(BEIGE, SAND_X, laneR_Y, SAND_WIDTH, laneR_HEIGHT)
@@ -129,7 +131,7 @@ class PlayerLong:
         if self.y_pos >= 505:
             self.y_pos = 505
             self.y_speed = 0
-            self.meter = abs(505-self.sand.rect.x) / 100
+            self.meter = abs(505- self.plank_w.rect.x +70) / 100
         self.rect.y = self.y_pos - self.player_img.get_height()
 
     def draw(self):
@@ -145,3 +147,5 @@ class PlayerLong:
         text_img = font.render(f'Hoppet ble dessverre dødt', True, BLUE)
         text_rect = text_img.get_rect(center=(WIDTH // 2, HEIGHT // 2))
         screen.blit(text_img, text_rect)
+
+
