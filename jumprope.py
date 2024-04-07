@@ -7,13 +7,13 @@ class JumpingRopeGame(MiniGame):
         super().__init__()
         self.player = PlayerRope(WIDTH // 2 - 50, HEIGHT - 220, 80, 110, RED)
         self.rope = Rope(WIDTH//2, HEIGHT//2, 10, BLUE)
-        self.running = True  # Definer running-variabelen her
+        self.running = True
         self.jump_over_rope = False
         self.countdown_timer = 3
 
     def redraw_window(self, player, rope):
         screen.blit(self.background_img, (0, 0))
-        screen.blit(player_img, (self.player.x, self.player.y))  # Tegn playeren som seahorse.png
+        screen.blit(player_img, (self.player.x, self.player.y))
         pg.draw.circle(screen, self.rope.color, (self.rope.x, self.rope.y), self.rope.radius)
         score_text = font.render(f"Poengsum: {self.score}", True, RED)
         screen.blit(score_text, (10, 90))
@@ -60,20 +60,20 @@ class JumpingRopeGame(MiniGame):
 
             self.rope.update()  # Oppdater tauets posisjon
 
-            # Sjekk om playeren jumper over tauet og legg til poeng
+            # Sjekker om spilleren hopper over tauet og legg til poeng
             if self.player.y < self.rope.y and self.rope.x - self.rope.radius < self.player.x < self.rope.x + self.rope.radius * 2 and not self.jump_over_rope:
                 self.score += 1
                 self.jump_over_rope = True
             elif self.player.y >= self.rope.y:
                 self.jump_over_rope = False
 
-            # Sjekk om playeren og tauet kolliderer og avslutt spillet
+            # Sjekker om spilleren og tauet kolliderer, dersom de gjør det avsluttes spillet
             self.player_rect = pg.Rect(self.player.x, self.player.y, self.player.width, self.player.height)
             self.rope_rect = pg.Rect(self.rope.x - self.rope.radius, self.rope.y - self.rope.radius, 2 * self.rope.radius, 2 * self.rope.radius)
             if self.player_rect.colliderect(self.rope_rect):
                 return self.score
                 
-            self.redraw_window(self.player, self.rope)  # Tegn spillet
+            self.redraw_window(self.player, self.rope)  # Tegner spillet
 
             pg.display.flip()
 
@@ -101,13 +101,13 @@ class Rope:
         self.radius_multiplier = 1.15  # Multiplikator for å endre tauets lengde
 
     def update(self):
-        self.angle += self.angular_speed  # Oppdater vinkelen til tauet
-        self.angular_speed += 0.00005  # Øk svinghastigheten litt for hver oppdatering
-        # Beregn nye koordinater for tauet basert på vinkelen og multiplikatoren
+        self.angle += self.angular_speed  # Oppdaterer vinkelen til tauet
+        self.angular_speed += 0.00005  # Øker svinghastigheten litt for hver iterasjon
+        # Beregner nye koordinater for tauet basert på vinkelen og multiplikatoren
         self.x = int(WIDTH // 2 + math.cos(self.angle) * (WIDTH // 4) * self.radius_multiplier)
         self.y = int(HEIGHT // 2 + math.sin(self.angle) * (HEIGHT // 4) * self.radius_multiplier)
 
     def draw(self):
-        # Tegn tauet som en sirkel
+        # Tegner tauet som en sirkel
         pg.draw.circle(self.color, (self.x, self.y), self.radius)
         
