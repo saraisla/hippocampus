@@ -9,6 +9,7 @@ class JumpingRopeGame(MiniGame):
         self.rope = Rope(WIDTH//2, HEIGHT//2, 10, BLUE)
         self.running = True  # Definer running-variabelen her
         self.jump_over_rope = False
+        self.countdown_timer = 3
 
     def redraw_window(self, player, rope):
         screen.blit(self.background_img, (0, 0))
@@ -19,6 +20,18 @@ class JumpingRopeGame(MiniGame):
         self.home_button.draw()
 
     def run(self):
+        run = True
+        
+        countdown_font = pg.font.SysFont("Verdana", 150)
+        
+        while self.countdown_timer > 0:
+            screen.blit(self.background_img, (0, 0))
+            countdown_text = countdown_font.render(f"{self.countdown_timer}", True, BLUE)
+            screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
+            pg.display.flip()
+            pg.time.delay(1000) # Vent i 1 sekund
+            self.countdown_timer -= 1
+        
         while self.running:
             self.clock.tick(FPS)
             for event in pg.event.get():
@@ -50,7 +63,6 @@ class JumpingRopeGame(MiniGame):
             # Sjekk om playeren jumper over tauet og legg til poeng
             if self.player.y < self.rope.y and self.rope.x - self.rope.radius < self.player.x < self.rope.x + self.rope.radius * 2 and not self.jump_over_rope:
                 self.score += 1
-                self.rope.angular_speed+=0.005
                 self.jump_over_rope = True
             elif self.player.y >= self.rope.y:
                 self.jump_over_rope = False
@@ -63,11 +75,7 @@ class JumpingRopeGame(MiniGame):
                 
             self.redraw_window(self.player, self.rope)  # Tegn spillet
 
-            if self.player.y + self.player.height > HEIGHT:
-                return self.score   # Avslutt spillet hvis playeren faller utenfor skjermen
-
             pg.display.flip()
-
 
         return self.score  # Returner self.score når løkken er ferdig
 
@@ -94,6 +102,7 @@ class Rope:
 
     def update(self):
         self.angle += self.angular_speed  # Oppdater vinkelen til tauet
+        self.angular_speed += 0.00005  # Øk svinghastigheten litt for hver oppdatering
         # Beregn nye koordinater for tauet basert på vinkelen og multiplikatoren
         self.x = int(WIDTH // 2 + math.cos(self.angle) * (WIDTH // 4) * self.radius_multiplier)
         self.y = int(HEIGHT // 2 + math.sin(self.angle) * (HEIGHT // 4) * self.radius_multiplier)
