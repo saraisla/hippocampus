@@ -1,12 +1,11 @@
 from constants import *
 from main import *
 
-
 class LongJumpGame(MiniGame):
     def __init__(self):
         super().__init__()
         self.player = PlayerLong()
-        self.sand = self.player.sand
+        self.sand = Lane(BEIGE, SAND_X, laneR_Y, SAND_WIDTH, laneR_HEIGHT)
         self.plank_b = Lane(BLACK, plank_B_X, laneR_Y, plank_B_WIDTH, laneR_HEIGHT)  
         self.plank_w = Lane(WHITE, plank_W_X, laneR_Y, plank_W_WIDTH, laneR_HEIGHT)
         self.start = Lane(RED, START_X, laneR_Y, START_WIDTH, laneR_HEIGHT)
@@ -55,17 +54,17 @@ class LongJumpGame(MiniGame):
             self.player.move()
             self.player.draw()
 
-
-            # Sjekk for kollisjon med sanden
-            if self.player.rect.colliderect(self.player.sand.rect):
-                if not self.player.has_jumped:  # Sjekk om spilleren har hoppet
+            
+            if self.player.rect.colliderect(self.sand.rect):
+                run = False
+                self.player.show_meters()
+                pg.display.flip()
+                pg.time.delay(3000)
+                
+            elif self.player.rect.colliderect(self.plank_w.rect):
+                if not self.player.has_jumped:
                     run = False
                     self.player.dead()
-                    pg.display.flip()
-                    pg.time.delay(3000)
-                else:
-                    run = False
-                    self.player.show_meters()
                     pg.display.flip()
                     pg.time.delay(3000)
                     
@@ -107,7 +106,6 @@ class PlayerLong:
         self.rect = pg.Rect(10, self.y_pos, 30, 50)  # Rektangelstørrelse
         self.running = False  
         self.meter = 0
-        self.start_jump_pos = 0  # Lagrer startposisjonen til den svarte klossen ved hoppet
         self.sand = Lane(BEIGE, SAND_X, laneR_Y, SAND_WIDTH, laneR_HEIGHT)
         self.score=0
         self.has_jumped = False  # Legg til has_jumped attributt og sett til False
@@ -116,14 +114,12 @@ class PlayerLong:
 
     def start_movement(self):
         self.running = True
-        self.start_jump_pos = self.sand.rect.x
 
     def jump(self):
         if self.running and self.y_pos == 505:
             if not self.has_jumped:
                 self.has_jumped = True
                 self.y_speed = -self.jump_h
-                self.start_jump_pos = self.sand.rect.x
             
     def move(self):
         if self.y_pos < 505:
