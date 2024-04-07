@@ -63,7 +63,6 @@ class JumpingRopeGame(MiniGame):
             # Sjekk om playeren jumper over tauet og legg til poeng
             if self.player.y < self.rope.y and self.rope.x - self.rope.radius < self.player.x < self.rope.x + self.rope.radius * 2 and not self.jump_over_rope:
                 self.score += 1
-                #self.rope.angular_speed+=0.005
                 self.jump_over_rope = True
             elif self.player.y >= self.rope.y:
                 self.jump_over_rope = False
@@ -103,6 +102,7 @@ class Rope:
 
     def update(self):
         self.angle += self.angular_speed  # Oppdater vinkelen til tauet
+        self.angular_speed += 0.00005  # Øk svinghastigheten litt for hver oppdatering
         # Beregn nye koordinater for tauet basert på vinkelen og multiplikatoren
         self.x = int(WIDTH // 2 + math.cos(self.angle) * (WIDTH // 4) * self.radius_multiplier)
         self.y = int(HEIGHT // 2 + math.sin(self.angle) * (HEIGHT // 4) * self.radius_multiplier)
