@@ -144,4 +144,4 @@ class PlayerLong:
     def dead(self):
         text_img = font.render(f'Hoppet ble dessverre dødt', True, BLUE)
         text_rect = text_img.get_rect(center=(WIDTH // 2, HEIGHT // 2))
-        screen.blit(text_img, t
+        screen.blit(text_img, text_rect)
