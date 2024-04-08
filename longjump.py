@@ -22,7 +22,7 @@ class LongJumpGame(MiniGame):
             countdown_text = countdown_font.render(f"{self.countdown_timer}", True, BLUE)
             screen.blit(countdown_text, (WIDTH // 2 - countdown_text.get_width() // 2, HEIGHT // 2 - countdown_text.get_height() // 2))
             pg.display.flip()
-            pg.time.delay(1000) # Vent i 1 sekund
+            pg.time.delay(1000)
             self.countdown_timer -= 1
         
         while run:
@@ -69,7 +69,6 @@ class LongJumpGame(MiniGame):
                     pg.display.flip()
                     pg.time.delay(3000)
                     
-            # Oppdater poengsummen med antall meter hoppet
             self.score = self.player.meter * 10
 
             pg.display.flip()
@@ -104,15 +103,15 @@ class PlayerLong:
         self.y_gravity = 1
         self.jump_h = 20
         self.y_speed = 0  
-        self.rect = pg.Rect(10, self.y_pos, 30, 50)  # Rektangelstørrelse
+        self.rect = pg.Rect(10, self.y_pos, 30, 50) 
         self.plank_w = Lane(WHITE, plank_W_X, laneR_Y, plank_W_WIDTH, laneR_HEIGHT)
         self.running = False  
         self.meter = 0
         self.sand = Lane(BEIGE, SAND_X, laneR_Y, SAND_WIDTH, laneR_HEIGHT)
         self.score=0
-        self.has_jumped = False  # Legg til has_jumped attributt og sett til False
-        self.player_img = pg.image.load('bilder/seahorse.png')  # Last inn spillerens bilde
-        self.player_img = pg.transform.scale(self.player_img, (45, 55))  # Juster størrelsen
+        self.has_jumped = False
+        self.player_img = pg.image.load('bilder/seahorse.png')
+        self.player_img = pg.transform.scale(self.player_img, (45, 55))
 
     def start_movement(self):
         self.running = True
