@@ -1,0 +1,1 @@
+Hippocampusspillet er et spill inspirert av hippocampuslekene på Nadderud vgs. Det inneholder 4 minispill; lengdehopp, quiz, hoppetau og reaksjonsspill. Vi har laget en txt-fil hvor highscoren lagres, så målet med spillet er å slå denne highscoren og bli den neste hippocampusmesteren💪
